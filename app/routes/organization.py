@@ -7,11 +7,10 @@ from models import (
     RetrieveOrganisation,
     UpdateOrganization,
 )
-from typing import List
 import markupsafe
 import math
 
-router = APIRouter(prefix="/organizations")
+router = APIRouter(prefix="/organizations", tags=['organizations'])
 
 
 #### Utilities functions to go faster
@@ -52,7 +51,7 @@ async def add_an_organization(organization: CreateOrganization, session: Session
     description = markupsafe.escape_silent(organization.description)
     if get_by_name(name, session):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_409_CONFLICT,
             detail="Organization 'name' value already exist",
         )
 
@@ -104,7 +103,7 @@ async def update_an_organization(
         is_name = get_by_name(update_org.name, session)
         if is_name and is_name.uuid != organization.uuid:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
+                status_code=status.HTTP_409_CONFLICT,
                 detail="Organization 'name' value already exist",
             )
         organization.name = markupsafe.escape_silent(update_org.name.lower())
