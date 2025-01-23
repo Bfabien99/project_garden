@@ -10,7 +10,7 @@ from models import (
 import markupsafe
 import math
 
-router = APIRouter(prefix="/organizations", tags=["organizations"])
+router = APIRouter(prefix="/api/organizations", tags=["organizations"])
 
 
 #### Utilities functions to go faster

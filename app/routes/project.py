@@ -5,7 +5,7 @@ from models import CreateProject, Project, RetrieveProject, UpdateProject, Organ
 import markupsafe
 import math
 
-router = APIRouter(prefix="/projects", tags=["projects"])
+router = APIRouter(prefix="/api/projects", tags=["projects"])
 
 
 #### Utilities functions to go faster

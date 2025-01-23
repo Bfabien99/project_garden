@@ -11,7 +11,7 @@ from models import (
 from faker import Faker
 import markupsafe
 
-router = APIRouter(prefix="/fakers", tags=["faker"])
+router = APIRouter(prefix="/api/fakers", tags=["faker"])
 fake = Faker()
 # localhost = "http://localhost:8000"
 
