@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status
-from sqlmodel import select
+from sqlmodel import select, func
 from dependencies import SessionDep
 from models import (
     CreateOrganization,
@@ -9,6 +9,7 @@ from models import (
 )
 from typing import List
 import markupsafe
+import math
 
 router = APIRouter(prefix="/organizations")
 
@@ -37,7 +38,10 @@ def get_by_uuid(uuid: str, session: SessionDep):
 async def get_all_organizations_with_pagination(
     session: SessionDep, skip: int = 0, limit: int = 20
 ):
-    return session.exec(select(Organization).offset(skip).limit(limit)).all()
+    total = session.exec(select(func.count(Organization.id))).one()
+    page = math.ceil(total/limit)
+    organizations = session.exec(select(Organization).offset(skip).limit(limit)).all()
+    return {"total": total, "pages": page, "data": organizations}
 
 
 @router.post("")
@@ -67,15 +71,17 @@ async def add_an_organization(organization: CreateOrganization, session: Session
     )
 
 
-@router.get("/all", response_model=List[RetrieveOrganisation])
+@router.get("/all")
 async def get_all_organizations(session: SessionDep):
-    return session.exec(select(Organization)).all()
+    total = session.exec(select(func.count(Organization.id))).one()
+    organizations = session.exec(select(Organization)).all()
+    return {"total": total, "data": organizations}
 
 
 @router.get("/{uuid}", response_model=RetrieveOrganisation)
 async def get_an_organization(session: SessionDep, uuid: str):
     organization = get_by_uuid(uuid, session)
-    if not organization(uuid, session):
+    if not organization:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Organization #{uuid} not found",
@@ -88,7 +94,7 @@ async def update_an_organization(
     session: SessionDep, uuid: str, update_org: UpdateOrganization
 ):
     organization = get_by_uuid(uuid, session)
-    if not organization(uuid, session):
+    if not organization:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Organization #{uuid} not found",
@@ -129,7 +135,7 @@ async def update_an_organization(
 @router.delete("/{uuid}")
 async def delete_an_organization(session: SessionDep, uuid: str):
     organization = get_by_uuid(uuid, session)
-    if not organization(uuid, session):
+    if not organization:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Organization #{uuid} not found",
