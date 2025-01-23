@@ -61,7 +61,6 @@
         }
 
         const json = await response.json();
-        console.log(json);
         if (json.total) {
           spt.innerHTML = json.total;
 
@@ -89,20 +88,19 @@
         console.error(error.message);
       }
     }
-
     async function callApiGetProjectDetails(id) {
-        url = `http://localhost:8000/api/projects/${id}`;
-        try {
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-          }
-  
-          const json = await response.json();
-          console.log(json);
-          Swal.fire({
-            title: "Project Details",
-            html: `
+      url = `http://localhost:8000/api/projects/${id}`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+
+        const json = await response.json();
+
+        Swal.fire({
+          title: "Project Details",
+          html: `
             <div class="flex flex-col gap-1 text-lg">
                 <img src="${json.project.logo}" class="rounded-full w-20 h-20 border mx-auto">
                 <p class="text-gray-800 font-bold">${json.project.title}</p>
@@ -113,13 +111,12 @@
                 <p class="text-gray-800 font-semibold">Org: #${json.organization.name}</p>
             </div>
             `,
-            icon: "info"
-          });
-        } catch (error) {
-          console.error(error.message);
-        }
+          icon: "info",
+        });
+      } catch (error) {
+        console.error(error.message);
       }
-
+    }
     async function callApiGetOrganizations(skip = 0, limit = 5) {
       url = `http://localhost:8000/api/organizations?skip=${skip}&limit=${limit}`;
       try {
@@ -156,20 +153,19 @@
         console.error(error.message);
       }
     }
-
     async function callApiGetOrganizationDetails(id) {
-        url = `http://localhost:8000/api/organizations/${id}`;
-        try {
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-          }
-  
-          const json = await response.json();
-          console.log(json);
-          Swal.fire({
-            title: "Project Details",
-            html: `
+      url = `http://localhost:8000/api/organizations/${id}`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+
+        const json = await response.json();
+
+        Swal.fire({
+          title: "Project Details",
+          html: `
             <div class="flex flex-col gap-1 text-lg">
                 <img src="${json.logo}" class="rounded-full w-20 h-20 border mx-auto">
                 <p class="text-gray-800 font-bold">${json.name}</p>
@@ -177,12 +173,13 @@
                 <p class="text-gray-600">${json.description}</p>
             </div>
             `,
-            icon: "info"
-          });
-        } catch (error) {
-          console.error(error.message);
-        }
+          icon: "info",
+        });
+      } catch (error) {
+        console.error(error.message);
       }
+    }
+    
     callApiGetProjects();
     callApiGetOrganizations();
   </script>
