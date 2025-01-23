@@ -17,7 +17,9 @@ class ProjectStatus(str, Enum):
 # Modèle principal pour les organisations
 class Organization(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
-    uuid: str = Field(default_factory=lambda: str(uuid.uuid4()), index=True, unique=True)
+    uuid: str = Field(
+        default_factory=lambda: str(uuid.uuid4()), index=True, unique=True
+    )
     name: str = Field(..., max_length=100, index=True, unique=True)
     short_name: Optional[str] = Field(default=None, max_length=100)
     logo: Optional[str] = Field(default=None)
@@ -30,7 +32,9 @@ class Organization(SQLModel, table=True):
 # Modèle principal pour les projets
 class Project(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
-    uuid: str = Field(default_factory=lambda: str(uuid.uuid4()), index=True, unique=True)
+    uuid: str = Field(
+        default_factory=lambda: str(uuid.uuid4()), index=True, unique=True
+    )
     logo: Optional[str] = Field(default=None)
     title: str = Field(..., max_length=150)
     description: Optional[str] = Field(default=None)
@@ -73,6 +77,7 @@ class RetrieveProject(SQLModel):
     end_date: Optional[date]
     organization_id: str
 
+
 # Modèle pour récupérer une organisation avec ses projets
 class RetrieveOrganisation(SQLModel):
     uuid: str
@@ -89,6 +94,7 @@ class UpdateOrganization(SQLModel):
     name: Optional[str] = Field(default=None)
     short_name: Optional[str] = Field(default=None)
     description: Optional[str] = Field(default=None)
+
 
 class UpdateProject(SQLModel):
     logo: Optional[str]

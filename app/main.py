@@ -2,11 +2,14 @@ import uvicorn
 from fastapi import FastAPI
 from database import create_database
 from routes import organization, project, fake_route
-app = FastAPI()
 
-@app.on_event('startup')
+app = FastAPI(title="Project Garden")
+
+
+@app.on_event("startup")
 def initiate():
     create_database()
+
 
 app.include_router(organization.router)
 app.include_router(project.router)

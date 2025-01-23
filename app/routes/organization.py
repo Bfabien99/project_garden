@@ -10,7 +10,7 @@ from models import (
 import markupsafe
 import math
 
-router = APIRouter(prefix="/organizations", tags=['organizations'])
+router = APIRouter(prefix="/organizations", tags=["organizations"])
 
 
 #### Utilities functions to go faster
@@ -38,7 +38,7 @@ async def get_all_organizations_with_pagination(
     session: SessionDep, skip: int = 0, limit: int = 20
 ):
     total = session.exec(select(func.count(Organization.id))).one()
-    page = math.ceil(total/limit)
+    page = math.ceil(total / limit)
     organizations = session.exec(select(Organization).offset(skip).limit(limit)).all()
     return {"total": total, "pages": page, "data": organizations}
 
