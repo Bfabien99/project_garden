@@ -9,12 +9,16 @@
   <body class="w-full min-h-screen">
     <div
       id="container"
-      class="w-full max-w-screen-xl p-4 mx-auto border min-h-screen"
+      class="w-full max-w-screen-xl p-2 mx-auto border min-h-screen"
     >
+    <h2 class="font-bold text-lg text-center text-gray-800">Project Garden</h2>
       <section id="section_organization" class="flex flex-col">
-        <h2 class="font-bold p-4 border-b w-fit text-lg">
-          Organisations <span id="section_organization_total"></span>
-        </h2>
+        <div class="flex gap-4 items-center">
+          <h2 class="font-bold p-4 border-b w-fit text-lg">
+            Organisations <span id="section_organization_total"></span>
+          </h2>
+          <a href="/organization">Add</a>
+        </div>
         <div class="flex flex-col">
           <div
             id="section_organization_data"
@@ -27,11 +31,17 @@
         </div>
       </section>
       <section id="section_project" class="flex flex-col">
-        <h2 class="font-bold p-4 border-b w-fit text-lg">
-          Projets <span id="section_project_total"></span>
-        </h2>
+        <div class="flex gap-4 items-center">
+          <h2 class="font-bold p-4 border-b w-fit text-lg">
+            Projets <span id="section_project_total"></span>
+          </h2>
+          <div>
+            <a href="/project">Add</a>
+            <a href="#" onclick="callApiGetProjects(skip = 0, limit = 8)">Reload</a>
+          </div>
+        </div>
         <div class="flex flex-col">
-          <div id="section_project_data"></div>
+          <div id="section_project_data" class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
           <div id="section_project_pagination" class="flex gap-4 p-2"></div>
         </div>
       </section>
@@ -39,6 +49,8 @@
   </body>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
+    localStorage.clear();
+    
     // section organization
     let so = document.getElementById("section_organization");
     let sot = document.getElementById("section_organization_total");
@@ -51,7 +63,7 @@
     let spd = document.getElementById("section_project_data");
     let spp = document.getElementById("section_project_pagination");
 
-    async function callApiGetProjects(skip = 0, limit = 5) {
+    async function callApiGetProjects(skip = 0, limit = 8) {
       url = `http://localhost:8000/api/projects?skip=${skip}&limit=${limit}`;
       try {
         spd.innerHTML = spp.innerHTML = "";
@@ -72,7 +84,10 @@
                             <p class="font-semibold">${el.title}</p>
                             <p>start date: ${el.start_date}</p>
                             <p>end date: ${el.end_date}</p>
-                            <a href="#" onclick="callApiGetProjectDetails('${el.uuid}')" class="w-fit mt-2 p-2 bg-gray-100 rounded-[5px] text-gray-400 hover:bg-gray-200 border border-gray-300">details</a>
+                            <div class="flex gap-4">
+                              <a href="#" onclick="callApiGetProjectDetails('${el.uuid}')" class="w-fit mt-2 p-2 bg-gray-100 rounded-[5px] text-gray-400 hover:bg-gray-200 border border-gray-300">details</a>
+                            <a href="#" onclick="callApiGetProjectToEdit('${el.uuid}')" class="w-fit mt-2 p-2 bg-gray-100 rounded-[5px] text-gray-400 hover:bg-gray-200 border border-gray-300">edit</a>
+                            </div>
                     </div>
                     `;
             });
@@ -117,7 +132,22 @@
         console.error(error.message);
       }
     }
-    async function callApiGetOrganizations(skip = 0, limit = 5) {
+    async function callApiGetProjectToEdit(id) {
+      url = `http://localhost:8000/api/projects/${id}`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+
+        const json = await response.json();
+        localStorage.setItem('p_uuid', json.project.uuid)
+        window.location = '/project/edit'
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+    async function callApiGetOrganizations(skip = 0, limit = 8) {
       url = `http://localhost:8000/api/organizations?skip=${skip}&limit=${limit}`;
       try {
         sod.innerHTML = sop.innerHTML = "";
@@ -137,7 +167,11 @@
                             <img src="${el.logo}" class="rounded-full w-20 h-20 border">
                             <p>${el.name}</p>
                             <p class="font-semibold">#${el.short_name}</p>
-                            <a href="#" onclick="callApiGetOrganizationDetails('${el.uuid}')" class="w-fit mt-2 p-2 bg-gray-100 rounded-[5px] text-gray-400 hover:bg-gray-200 border border-gray-300">details</a>
+                            <div class="flex gap-2 flex-wrap">
+                              <a href="#" onclick="callApiGetOrganizationDetails('${el.uuid}')" class="w-fit mt-2 p-2 bg-gray-100 rounded-[5px] text-gray-400 hover:bg-gray-200 border border-gray-300">details</a>
+                            <a href="#" onclick="callApiGetOrganizationProjects('${el.uuid}')" class="w-fit mt-2 p-2 bg-gray-100 rounded-[5px] text-gray-400 hover:bg-gray-200 border border-gray-300">projects</a>
+                            <a href="#" onclick="callApiGetOrganizationToEdit('${el.uuid}')" class="w-fit mt-2 p-2 bg-gray-100 rounded-[5px] text-gray-400 hover:bg-gray-200 border border-gray-300">edit</a>
+                            </div>
                     </div>
                     `;
             });
@@ -164,7 +198,7 @@
         const json = await response.json();
 
         Swal.fire({
-          title: "Project Details",
+          title: "Organization Details",
           html: `
             <div class="flex flex-col gap-1 text-lg">
                 <img src="${json.logo}" class="rounded-full w-20 h-20 border mx-auto">
@@ -179,7 +213,67 @@
         console.error(error.message);
       }
     }
-    
+    async function callApiGetOrganizationProjects(id, skip=0, limit=8){
+      url = `http://localhost:8000/api/organizations/${id}`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+
+        const json = await response.json();
+        if (json.projects) {
+          spd.innerHTML = spp.innerHTML = "";
+          spt.innerHTML = json.projects.length;
+
+          if (true) {
+            offset = skip
+            total = json.projects.length
+            pages = Math.ceil(total/limit)
+            let projects = json.projects.slice(offset, offset + limit);
+            projects.forEach((el) => {
+              spd.innerHTML += `
+                    <div class="flex flex-col p-2 border rounded-[5px] bg-gray-50">
+                            <img src="${el.logo}" class="rounded-full w-20 h-20 border">
+                            <p class="font-semibold">${el.title}</p>
+                            <p>start date: ${el.start_date}</p>
+                            <p>end date: ${el.end_date}</p>
+                            <div class="flex gap-4">
+                              <a href="#" onclick="callApiGetProjectDetails('${el.uuid}')" class="w-fit mt-2 p-2 bg-gray-100 rounded-[5px] text-gray-400 hover:bg-gray-200 border border-gray-300">details</a>
+                            <a href="#" onclick="callApiGetProjectToEdit('${el.uuid}')" class="w-fit mt-2 p-2 bg-gray-100 rounded-[5px] text-gray-400 hover:bg-gray-200 border border-gray-300">edit</a>
+                            </div>
+                    </div>
+                    `;
+            });
+          }
+          for (let i = 1; i <= pages; i++) {
+            offset = (i - 1) * limit;
+            spp.innerHTML += `
+                    <a href="#" class="p-2 border hover:bg-gray-200 font-semibold text-gray-400" onclick="callApiGetOrganizationProjects('${id}', ${offset}, ${limit})">${i}</a>
+                `;
+          }
+        }
+
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+    async function callApiGetOrganizationToEdit(id) {
+      url = `http://localhost:8000/api/organizations/${id}`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+
+        const json = await response.json();
+        localStorage.setItem('o_uuid', json.uuid)
+        window.location = '/organization/edit'
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+
     callApiGetProjects();
     callApiGetOrganizations();
   </script>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="//cdn.tailwindcss.com"></script>
+    <title>Document</title>
+  </head>
+  <body class="w-full min-h-screen">
+    <div
+      id="container"
+      class="w-full max-w-screen-xl p-4 mx-auto border min-h-screen"
+    >
+      <section id="section_project" class="flex flex-col">
+        <div class="flex gap-4 items-center">
+          <h2 class="font-bold p-4 border-b w-fit text-lg">Edit Project</h2>
+          <a href="/">Back</a>
+        </div>
+      </section>
+      <section id="section_project" class="flex flex-col p-4">
+        <form class="w-full mx-auto flex flex-col gap-4" id="form">
+          <div
+            class="border bg-gray-100 border border-gray-200 p-4 flex flex-col gap-4"
+          >
+            <div class="flex flex-col">
+              <label class="font-semibold" for="inputTitle"
+                >Project title</label
+              >
+              <input
+                class="p-4 my-2 rounded-[5px] border"
+                type="text"
+                name="name"
+                id="inputTitle"
+                required
+              />
+            </div>
+            <div class="flex flex-col">
+              <label class="font-semibold" for="inputDescription"
+                >Project Description</label
+              >
+              <textarea
+                class="p-4 my-2 rounded-[5px] border"
+                name="description"
+                id="inputDescription"
+              ></textarea>
+            </div>
+            <div class="flex flex-col">
+              <label class="font-semibold" for="inputLogo"
+                >Project Logo Url</label
+              >
+              <input
+                class="p-4 my-2 rounded-[5px] border"
+                type="url"
+                name="logo"
+                id="inputLogo"
+              />
+            </div>
+            <div class="flex flex-col">
+              <label class="font-semibold" for="inputStartDate"
+                >Project Start Date</label
+              >
+              <input
+                class="p-4 my-2 rounded-[5px] border"
+                type="date"
+                name="start"
+                id="inputStartDate"
+              />
+            </div>
+            <div class="flex flex-col">
+              <label class="font-semibold" for="inputEndDate"
+                >Project End Date</label
+              >
+              <input
+                class="p-4 my-2 rounded-[5px] border"
+                type="date"
+                name="end"
+                id="inputEndDate"
+              />
+            </div>
+            <div class="flex flex-col">
+              <label class="font-semibold" for="InputOrganizationId"
+                >Project Organization ID</label
+              >
+              <select
+                class="p-4 my-2 rounded-[5px] border"
+                name="organizationId"
+                id="inputOrganizationId"
+              ></select>
+            </div>
+            <div class="flex flex-col">
+              <label class="font-semibold" for="InputStatus"
+                >Project Status</label
+              >
+              <select
+                class="p-4 my-2 rounded-[5px] border"
+                name="status"
+                id="inputStatus"
+              >
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+                <option value="pending">Pending</option>
+                <option value="on_hold">On Hold</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <button
+            id="btnSubmit"
+            class="w-full max-w-[100px] rounded-[5px] shadow-sm p-2 border border-blue-200 bg-blue-200 hover:bg-blue-400 text-white font-semibold"
+          >
+            Edit
+          </button>
+          <a href="#" class="w-full max-w-[100px] rounded-[5px] shadow-sm p-2 border border-red-200 bg-red-200 hover:bg-red-400 text-white font-semibold" onclick="callApiDeleteProject()">Delete</a>
+          </div>
+        </form>
+      </section>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    // select element
+    let form = document.getElementById("form");
+    let inputTitle = document.getElementById("inputTitle");
+    let inputDescription = document.getElementById("inputDescription");
+    let inputLogo = document.getElementById("inputLogo");
+    let inputStartDate = document.getElementById("inputStartDate");
+    let inputEndDate = document.getElementById("inputEndDate");
+    let inputOrganizationId = document.getElementById("inputOrganizationId");
+    let inputStatus = document.getElementById("inputStatus");
+    let btnSubmit = document.getElementById("btnSubmit");
+    const uuid = localStorage.getItem("p_uuid");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        title: inputTitle.value,
+        logo: inputLogo.value,
+        description: inputDescription.value,
+        start_date: inputStartDate.value,
+        end_date: inputEndDate.value,
+        organization_id: inputOrganizationId.value,
+        status: inputStatus.value,
+      };
+      await callApiEditProject(uuid, data);
+    });
+
+    async function callApiDeleteProject() {
+      const url = "http://localhost:8000/api/projects/" + uuid;
+      try {
+        const response = await fetch(url, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        });
+
+        const json = await response.json();
+        if (!response.ok || response.status != 200) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: json.detail,
+          });
+          return;
+        }
+        console.log(json);
+        Swal.fire({
+          icon: "success",
+          title: "Great!",
+          text: "project deleted",
+        });
+        form.reset()
+        setTimeout(() => {
+          window.location = "/";
+        }, 2000);
+        
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+    async function callApiEditProject(id, data) {
+      const url = "http://localhost:8000/api/projects/" + id;
+      try {
+        const response = await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        const json = await response.json();
+        if (!response.ok || response.status != 200) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: json.detail,
+          });
+          return;
+        }
+        console.log(json);
+        Swal.fire({
+          icon: "success",
+          title: "Great!",
+          text: "project edited",
+        });
+        callApiGetProject(uuid);
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+    async function callApiGetAllOrganizations() {
+      url = `http://localhost:8000/api/organizations/all`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+
+        const json = await response.json();
+        if (json.total) {
+          return json.data;
+        }
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+    async function SelectLoadData() {
+      if (!inputOrganizationId) {
+        console.error(
+          "L'élément inputOrganizationId est introuvable dans le DOM."
+        );
+        return;
+      }
+
+      result = await callApiGetAllOrganizations();
+      result.forEach((el) => {
+        inputOrganizationId.innerHTML += `
+              <option value="${el.uuid}">${el.name}</option>
+            `;
+      });
+    }
+    async function callApiGetProject(id) {
+      url = `http://localhost:8000/api/projects/${id}`;
+      try {
+        const response = await fetch(url);
+
+        const json = await response.json();
+        console.log(json);
+
+        if (!response.ok) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: json.detail,
+          });
+          setTimeout(() => {
+            window.location = "/";
+          }, 4000);
+          //throw new Error(`Response status: ${response.status}`);
+        }
+        await SelectLoadData();
+        inputTitle.value = json.project.title;
+        inputLogo.value = json.project.logo;
+        inputDescription.value = json.project.description;
+        inputStartDate.value = json.project.start_date;
+        inputEndDate.value = json.project.end_date;
+        inputOrganizationId.value = json.project.organization_id;
+        inputStatus.value = json.project.status;
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+    callApiGetProject(uuid);
+  </script>
+</html>

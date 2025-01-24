@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="//cdn.tailwindcss.com"></script>
+    <title>Document</title>
+  </head>
+  <body class="w-full min-h-screen">
+    <div
+      id="container"
+      class="w-full max-w-screen-xl p-4 mx-auto border min-h-screen"
+    >
+      <section id="section_organization" class="flex flex-col">
+        <div class="flex gap-4 items-center">
+          <h2 class="font-bold p-4 border-b w-fit text-lg">New Organisation</h2>
+          <a href="/">Back</a>
+        </div>
+      </section>
+      <section id="section_project" class="flex flex-col p-4">
+        <form class="w-full mx-auto flex flex-col gap-4" id="form">
+          <div
+            class="border bg-gray-100 border border-gray-200 p-4 flex flex-col gap-4"
+          >
+            <div class="flex flex-col">
+              <label class="font-semibold" for="inputName"
+                >Organization name</label
+              >
+              <input
+                class="p-4 my-2 rounded-[5px] border"
+                type="text"
+                name="name"
+                id="inputName"
+                required
+              />
+            </div>
+            <div class="flex flex-col">
+              <label class="font-semibold" for="inputShortName"
+                >Organization ShortName</label
+              >
+              <input
+                class="p-4 my-2 rounded-[5px] border"
+                type="text"
+                name="short_name"
+                id="inputShortName"
+              />
+            </div>
+            <div class="flex flex-col">
+              <label class="font-semibold" for="inputDescription"
+                >Organization Description</label
+              >
+              <textarea
+                class="p-4 my-2 rounded-[5px] border"
+                name="description"
+                id="inputDescription"
+              ></textarea>
+            </div>
+            <div class="flex flex-col">
+              <label class="font-semibold" for="inputLogo"
+                >Organization Logo Url</label
+              >
+              <input
+                class="p-4 my-2 rounded-[5px] border"
+                type="url"
+                name="logo"
+                id="inputLogo"
+              />
+            </div>
+          </div>
+          <button
+            id="btnSubmit"
+            class="w-full max-w-[100px] rounded-[5px] shadow-sm p-2 border border-blue-200 bg-blue-200 hover:bg-blue-400 text-white font-semibold"
+          >
+            Save
+          </button>
+        </form>
+      </section>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    // select element
+    let form = document.getElementById("form");
+    let inputName = document.getElementById("inputName");
+    let inputShortName = document.getElementById("inputShortName");
+    let inputDescription = document.getElementById("inputDescription");
+    let inputLogo = document.getElementById("inputLogo");
+    let btnSubmit = document.getElementById("btnSubmit");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        name: inputName.value,
+        short_name: inputShortName.value,
+        description: inputDescription.value,
+        logo: inputLogo.value,
+      };
+      await callApiAddOrganization(data);
+    });
+    async function callApiAddOrganization(data) {
+      const url = "http://localhost:8000/api/organizations";
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        const json = await response.json();
+        if (!response.ok || response.status != 200) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: json.detail,
+            });
+            return
+        }
+        console.log(json);
+        Swal.fire({
+            icon: "success",
+            title: "Great!",
+            text: "New organization created",
+        });
+        form.reset()
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+  </script>
+</html>
