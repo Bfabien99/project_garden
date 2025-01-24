@@ -16,7 +16,11 @@
           <h2 class="font-bold p-4 border-b w-fit text-lg">
             Edit Organisation
           </h2>
-          <a href="/" class="p-2 bg-gray-500 rounded-[5px] text-900 hover:bg-gray-700 border border-gray-900">Back</a>
+          <a
+            href="/"
+            class="p-2 bg-gray-500 rounded-[5px] text-900 hover:bg-gray-700 border border-gray-900"
+            >Back</a
+          >
         </div>
       </section>
       <section id="section_organization" class="flex flex-col p-4">
@@ -109,7 +113,6 @@
       };
       await callApiEditOrganization(uuid, data);
     });
-
     async function callApiDeleteOrganization() {
       const url = "http://localhost:8000/api/organizations/" + uuid;
       try {

@@ -11,13 +11,19 @@
       id="container"
       class="w-full max-w-screen-xl p-2 mx-auto border min-h-screen"
     >
-    <h2 class="font-bold text-lg text-center text-gray-800">Project Garden</h2>
+      <h2 class="font-bold text-lg text-center text-gray-800">
+        Project Garden
+      </h2>
       <section id="section_organization" class="flex flex-col">
         <div class="flex gap-4 items-center">
           <h2 class="font-bold p-4 border-b w-fit text-lg">
             Organisations <span id="section_organization_total"></span>
           </h2>
-          <a href="/organization" class="p-2 bg-blue-100 rounded-[5px] text-blue-400 hover:bg-blue-200 border border-blue-300">Add</a>
+          <a
+            href="/organization"
+            class="p-2 bg-blue-100 rounded-[5px] text-blue-400 hover:bg-blue-200 border border-blue-300"
+            >Add</a
+          >
         </div>
         <div class="flex flex-col">
           <div
@@ -36,12 +42,24 @@
             Projets <span id="section_project_total"></span>
           </h2>
           <div>
-            <a href="/project" class="p-2 bg-blue-100 rounded-[5px] text-blue-400 hover:bg-blue-200 border border-blue-300">Add</a>
-            <a href="#" onclick="callApiGetProjects(skip = 0, limit = 8)" class="p-2 bg-gray-100 rounded-[5px] text-gray-400 hover:bg-gray-200 border border-gray-300">Reload</a>
+            <a
+              href="/project"
+              class="p-2 bg-blue-100 rounded-[5px] text-blue-400 hover:bg-blue-200 border border-blue-300"
+              >Add</a
+            >
+            <a
+              href="#"
+              onclick="callApiGetProjects(skip = 0, limit = 8)"
+              class="p-2 bg-gray-100 rounded-[5px] text-gray-400 hover:bg-gray-200 border border-gray-300"
+              >Reload</a
+            >
           </div>
         </div>
         <div class="flex flex-col">
-          <div id="section_project_data" class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+          <div
+            id="section_project_data"
+            class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4"
+          ></div>
           <div id="section_project_pagination" class="flex gap-4 p-2"></div>
         </div>
       </section>
@@ -141,8 +159,8 @@
         }
 
         const json = await response.json();
-        localStorage.setItem('p_uuid', json.project.uuid)
-        window.location = '/project/edit'
+        localStorage.setItem("p_uuid", json.project.uuid);
+        window.location = "/project/edit";
       } catch (error) {
         console.error(error.message);
       }
@@ -213,7 +231,7 @@
         console.error(error.message);
       }
     }
-    async function callApiGetOrganizationProjects(id, skip=0, limit=8){
+    async function callApiGetOrganizationProjects(id, skip = 0, limit = 8) {
       url = `http://localhost:8000/api/organizations/${id}`;
       try {
         const response = await fetch(url);
@@ -227,9 +245,9 @@
           spt.innerHTML = json.projects.length;
 
           if (true) {
-            offset = skip
-            total = json.projects.length
-            pages = Math.ceil(total/limit)
+            offset = skip;
+            total = json.projects.length;
+            pages = Math.ceil(total / limit);
             let projects = json.projects.slice(offset, offset + limit);
             projects.forEach((el) => {
               spd.innerHTML += `
@@ -253,7 +271,6 @@
                 `;
           }
         }
-
       } catch (error) {
         console.error(error.message);
       }
@@ -267,8 +284,8 @@
         }
 
         const json = await response.json();
-        localStorage.setItem('o_uuid', json.uuid)
-        window.location = '/organization/edit'
+        localStorage.setItem("o_uuid", json.uuid);
+        window.location = "/organization/edit";
       } catch (error) {
         console.error(error.message);
       }
