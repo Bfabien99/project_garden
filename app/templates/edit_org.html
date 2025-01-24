@@ -16,7 +16,7 @@
           <h2 class="font-bold p-4 border-b w-fit text-lg">
             Edit Organisation
           </h2>
-          <a href="/">Back</a>
+          <a href="/" class="p-2 bg-gray-500 rounded-[5px] text-900 hover:bg-gray-700 border border-gray-900">Back</a>
         </div>
       </section>
       <section id="section_organization" class="flex flex-col p-4">
@@ -78,7 +78,7 @@
             </button>
             <a
               href="#"
-              class="w-full max-w-[100px] rounded-[5px] shadow-sm p-2 border border-red-200 bg-red-200 hover:bg-red-400 text-white font-semibold"
+              class="text-center w-full max-w-[100px] rounded-[5px] shadow-sm p-2 border border-red-200 bg-red-200 hover:bg-red-400 text-white font-semibold"
               onclick="callApiDeleteOrganization()"
               >Delete</a
             >
@@ -117,11 +117,14 @@
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-          }
+          },
         });
 
         const json = await response.json();
         if (!response.ok || response.status != 200) {
+          if (Array.isArray(json.detail)) {
+            json.detail = `${json.detail[0].loc[1]} ${json.detail[0].msg}`;
+          }
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -156,6 +159,9 @@
 
         const json = await response.json();
         if (!response.ok || response.status != 200) {
+          if (Array.isArray(json.detail)) {
+            json.detail = `${json.detail[0].loc[1]} ${json.detail[0].msg}`;
+          }
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -182,7 +188,10 @@
         const json = await response.json();
         console.log(json);
 
-        if (!response.ok) {
+        if (!response.ok || response.status != 200) {
+          if (Array.isArray(json.detail)) {
+            json.detail = `${json.detail[0].loc[1]} ${json.detail[0].msg}`;
+          }
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -191,7 +200,6 @@
           setTimeout(() => {
             window.location = "/";
           }, 4000);
-          //throw new Error(`Response status: ${response.status}`);
         }
         inputName.value = json.name;
         inputShortName.value = json.short_name;

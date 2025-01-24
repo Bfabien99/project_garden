@@ -14,7 +14,7 @@
       <section id="section_organization" class="flex flex-col">
         <div class="flex gap-4 items-center">
           <h2 class="font-bold p-4 border-b w-fit text-lg">New Organisation</h2>
-          <a href="/">Back</a>
+          <a href="/" class="p-2 bg-gray-500 rounded-[5px] text-900 hover:bg-gray-700 border border-gray-900">Back</a>
         </div>
       </section>
       <section id="section_project" class="flex flex-col p-4">
@@ -53,6 +53,7 @@
                 class="p-4 my-2 rounded-[5px] border"
                 name="description"
                 id="inputDescription"
+                maxlength="300"
               ></textarea>
             </div>
             <div class="flex flex-col">
@@ -110,21 +111,25 @@
         });
 
         const json = await response.json();
+        console.log(json.detail);
         if (!response.ok || response.status != 200) {
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: json.detail,
-            });
-            return
+          if (Array.isArray(json.detail)) {
+            json.detail = `${json.detail[0].loc[1]} ${json.detail[0].msg}`;
+          }
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: json.detail,
+          });
+          return;
         }
         console.log(json);
         Swal.fire({
-            icon: "success",
-            title: "Great!",
-            text: "New organization created",
+          icon: "success",
+          title: "Great!",
+          text: "New organization created",
         });
-        form.reset()
+        form.reset();
       } catch (error) {
         console.error(error.message);
       }

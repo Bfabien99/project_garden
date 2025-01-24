@@ -17,7 +17,7 @@
           <h2 class="font-bold p-4 border-b w-fit text-lg">
             Organisations <span id="section_organization_total"></span>
           </h2>
-          <a href="/organization">Add</a>
+          <a href="/organization" class="p-2 bg-blue-100 rounded-[5px] text-blue-400 hover:bg-blue-200 border border-blue-300">Add</a>
         </div>
         <div class="flex flex-col">
           <div
@@ -36,8 +36,8 @@
             Projets <span id="section_project_total"></span>
           </h2>
           <div>
-            <a href="/project">Add</a>
-            <a href="#" onclick="callApiGetProjects(skip = 0, limit = 8)">Reload</a>
+            <a href="/project" class="p-2 bg-blue-100 rounded-[5px] text-blue-400 hover:bg-blue-200 border border-blue-300">Add</a>
+            <a href="#" onclick="callApiGetProjects(skip = 0, limit = 8)" class="p-2 bg-gray-100 rounded-[5px] text-gray-400 hover:bg-gray-200 border border-gray-300">Reload</a>
           </div>
         </div>
         <div class="flex flex-col">
@@ -50,7 +50,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     localStorage.clear();
-    
+
     // section organization
     let so = document.getElementById("section_organization");
     let sot = document.getElementById("section_organization_total");
