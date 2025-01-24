@@ -139,6 +139,11 @@ async def delete_an_organization(session: SessionDep, uuid: str):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Organization #{uuid} not found",
         )
+    if organization.projects:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail=f"Organization has active projects, you cant't delete it.",
+        )
     session.delete(organization)
     session.commit()
     return {"detail": f"Organization #{uuid} deleted"}
