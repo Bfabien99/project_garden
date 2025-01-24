@@ -13,3 +13,27 @@ async def read_item(request: Request):
     return templates.TemplateResponse(
         request=request, name="index.html"
     )
+
+@router.get("/organization", response_class=HTMLResponse, include_in_schema=False)
+async def read_item(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="add_org.html"
+    )
+
+@router.get("/organization/edit", response_class=HTMLResponse, include_in_schema=False)
+async def read_item(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="edit_org.html"
+    )
+
+@router.get("/project", response_class=HTMLResponse, include_in_schema=False)
+async def read_item(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="add_pro.html"
+    )
+
+@router.get("/project/edit", response_class=HTMLResponse, include_in_schema=False)
+async def read_item(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="edit_pro.html"
+    )
