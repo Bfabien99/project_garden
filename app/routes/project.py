@@ -53,6 +53,12 @@ async def add_an_project(project: CreateProject, session: SessionDep):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Organisation #{project.organization_id} not found",
         )
+    
+    if project.start_date > project.end_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Start Date({project.start_date}) can't be superior than End Date({project.end_date})",
+        )
 
     save_pro = Project(
         title=title,
@@ -132,6 +138,12 @@ async def update_a_project(session: SessionDep, uuid: str, update_pro: UpdatePro
     if update_pro.end_date:
         project.end_date = update_pro.end_date
 
+    if project.start_date > project.end_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Start Date({project.start_date}) can't be superior than End Date({project.end_date})",
+        )
+    
     if update_pro.organization_id:
         organization = session.exec(
             select(Organization).where(Organization.uuid == update_pro.organization_id)
